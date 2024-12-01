@@ -3,13 +3,118 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>test html</title>
+    <title>UT2L</title>
     <script src="util.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="prism.js"></script>
+    <link rel="stylesheet" href="prism.css" />
+    <script
+      src="https://kit.fontawesome.com/1abfab8baa.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <h1 id="test" class="test">test</h1>
     <script>
       _.PVER();
+      _.style.setLightCSSReset();
     </script>
+    <noscript> javascript is disabled, please enable it </noscript>
+    <div class="cover">
+      <h1 class="title">UT2L</h1>
+      <h3>
+        the
+        <span style="color: aquamarine">write less, do less&#8482;</span>
+        javascript library
+      </h3>
+      <a class="scrolldown" href="#content"
+        ><i class="fa-solid fa-chevron-down"></i
+      ></a>
+    </div>
+    <div class="content" id="content">
+      <h1>Introduction</h1>
+      <p>
+        Javascript sucks, so we made it worse. This library adds simple
+        functions to control the HTML DOM.<br />
+        Ut2l defines two main variables:
+        <code class="language-js">util</code> and
+        <code class="language-js">_</code>.
+        <code class="language-js">util</code> has many different uses, and is
+        the main highlight of the library. <code class="language-js">_</code> is
+        just a shorthand/alias to util.
+      </p>
+      <br />
+      <h1>Simple Usage</h1>
+      <br />
+      <p>Find an element</p>
+      <pre><code class="language-js">// function parameters: util(a, b, c)
+
+_(".foo") // same as document.querySelector
+_(".foo", 2) // gets the third element with the class "foo" and mods it.
+_(".foo", (element, index) => {}) // runs the callback function for every element and mods each one.
+_(".foo", 2, (element) => {}) // runs the callback function once, for the third element with the class "foo" and mods it.
+_("#bar") // gets element by id and mods it.
+_("p") // grabs the first &lt;p&gt; tag in the DOM and mods it.
+_(existing_html_element) // returns the modded element.
+// Modding elements: adds certain properties which makes it easier to modify the element (e.g. .css(), .text())</code></pre>
+      <br />
+      <p>Create an element</p>
+      <pre><code class="language-js">// function parameters: util.create(type).set...
+
+const bar = _.create("div")
+  .setInnerHTML("innerhtml") // sets the InnerHTML
+  .setClassList(["a", "b"]) // sets the FULL classlist
+  .addClass("c") // adds a class to the classlist
+  .addAttribute("property", "value") // adds an attribute
+  .setId("foo") // sets the id
+  .render(); // renders the element
+
+document.body.append(bar); // append the element to the body</code></pre>
+      <br />
+      <p>Pick random</p>
+      <pre><code class="language-js">// function parameters: util.randInt(min, max), util.randFloat(min, max, decimalPlaces), util.randPick(collection [array/obj])
+
+_.randInt(1, 10) // int 1-10
+_.randInt(10) // int 0-10
+_.randFloat(1, 10, 2) // float 1-10, 2 decimal places
+_.randFloat(1, 10) // float 1-10
+_.randPick(['a', 'b', 'c']) // picks a random value from array
+_.randPick({
+  "a": 1,
+  "b": 2,
+  "c": 3
+}) // picks a random value from object
+
+document.body.append(bar); // append the element to the body</code></pre>
+      <br />
+      <h1>Util-Modified Elements</h1>
+      <p>
+        Mod elements simply by using the main "find elements" function (e.g.
+        <code class="language-js">_("a")</code>). Modded elements have simple
+        properties listed below.
+      </p>
+      <pre><code class="language-js">
+// Mod an element
+_(search_query);
+_(existing_html_element);
+
+// Use the element
+_(".foo").css({property: value})
+...
+      </code></pre>
+
+      <h2>_(...).on(listener, selector/callback, callback, onlyOnce)</h2>
+      <p>
+        Creates an event listener for the element.<br /><br />
+        <code class="language-js">listener</code> defines what event to listen
+        for.<br /><br />
+        <code class="language-js">selector/callback</code>: Can either be:
+        <br />
+        - A CSS selector string: Used for event delegation. <br />
+        - A callback function: Called directly when the event occurs.<br /><br />
+        <code class="language-js">callback</code>: If selectorOrCallback is a
+        selector, this is the callback function invoked when an element matching
+        the selector triggers the event.
+      </p>
+    </div>
   </body>
 </html>

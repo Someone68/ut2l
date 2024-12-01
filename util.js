@@ -1,4 +1,5 @@
 function util(a = null, b = null, c = null) {
+  if (a instanceof HTMLElement) return util.modElement(a);
   if (a && !b && !c) {
     return util.modElement(document.querySelector(a));
   } else if (a && b && !c) {
@@ -90,9 +91,11 @@ util.modElement = (elm) => {
     return elm;
   };
 
-  elm.detectCollision = (elementB) => {
+  elm.detectCollision = (elementB, i) => {
+    if (_(elementB, i ? i : null) == null)
+      throw new TypeError("[UT2L]: detectCollision: elementB is null");
     const rectA = elm.getBoundingClientRect();
-    const rectB = elementB.getBoundingClientRect();
+    const rectB = _(elementB, i ? i : null).getBoundingClientRect();
 
     return (
       rectA.left < rectB.right &&
