@@ -80,8 +80,9 @@ util.collisionHelper = (element, newX, newY) => {
 };
 
 util.MotionManager = class {
-  constructor(element) {
+  constructor(element, collision = false) {
     this.element = element;
+    this.collision = collision;
     this.collisionHelper = util.collisionHelper;
     this.state = {
       move: {
@@ -105,7 +106,7 @@ util.MotionManager = class {
   }
 
   // Move in a specific direction with speed
-  moveInDirection(direction, speed) {
+  moveDirection(direction, speed) {
     const directions = {
       up: -Math.PI / 2,
       "up-right": -Math.PI / 4,
@@ -126,7 +127,7 @@ util.MotionManager = class {
   }
 
   // Rotate the element to face a specific coordinate
-  rotateTowardCoordinate(targetX, targetY, rotationSpeed) {
+  rotatePosition(targetX, targetY, rotationSpeed) {
     const rect = this.element.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -173,7 +174,7 @@ util.MotionManager = class {
     const newY = this.state.position.y + this.state.move.dy * moveDistance;
 
     // Check if the new position causes a collision
-    if (!this.collisionHelper(this.element, newX, newY)) {
+    if (!this.collisionHelper(this.element, newX, newY) || !this.collision) {
       // No collision, move the element
       this.state.position.x = newX;
       this.state.position.y = newY;
@@ -719,15 +720,6 @@ util.ui.toast = (() => {
   };
 })();
 
-/**
- * @type {typeof util}
- */
-const _ = new Proxy(util.bind(util), {
-  get(target, prop) {
-    return prop in target ? target[prop] : util[prop];
-  },
-});
-
 util.config = {
   modal: {
     background: "#fff",
@@ -923,3 +915,12 @@ util.ui.toast = (() => {
     }, duration || cfg.duration);
   };
 })();
+
+/**
+ * @type {typeof util}
+ */
+const _ = new Proxy(util.bind(util), {
+  get(target, prop) {
+    return prop in target ? target[prop] : util[prop];
+  },
+});
