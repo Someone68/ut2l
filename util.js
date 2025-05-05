@@ -66,6 +66,117 @@ util.create = (elm) => {
   };
 };
 
+util.MotionManager = class {
+  constructor(element) {
+    this.element = element;
+
+    // Initialize motion states
+    this.state = {
+      move: {
+        direction: null, // up, right, down, etc.
+        speed: 0, // pixels per second
+        dx: 0, // direction x
+        dy: 0, // direction y
+      },
+      rotate: {
+        targetAngle: 0, // target angle in degrees
+        currentAngle: 0, // current angle in degrees
+        speed: 0, // rotation speed in degrees per second
+      },
+      position: {
+        x: parseFloat(element.style.left || 0),
+        y: parseFloat(element.style.top || 0),
+      },
+    };
+
+    // Store animation frame ID to cancel later
+    this.animationFrame = null;
+
+    // Start the main animation loop
+    this.animate();
+  }
+
+  // Start moving in a specific direction with speed
+  moveInDirection(direction, speed) {
+    const directions = {
+      up: -Math.PI / 2,
+      "up-right": -Math.PI / 4,
+      right: 0,
+      "down-right": Math.PI / 4,
+      down: Math.PI / 2,
+      "down-left": (3 * Math.PI) / 4,
+      left: Math.PI,
+      "up-left": -(3 * Math.PI) / 4,
+    };
+
+    this.state.move.direction = direction;
+    this.state.move.speed = speed;
+    const angle = directions[direction];
+
+    this.state.move.dx = Math.cos(angle);
+    this.state.move.dy = Math.sin(angle);
+  }
+
+  // Start rotating the element to face a specific coordinate
+  rotateTowardCoordinate(targetX, targetY, rotationSpeed) {
+    const rect = this.element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const dx = targetX - centerX;
+    const dy = targetY - centerY;
+    const targetAngleRad = Math.atan2(dy, dx);
+    const targetAngleDeg = targetAngleRad * (180 / Math.PI);
+
+    this.state.rotate.targetAngle = targetAngleDeg;
+    this.state.rotate.speed = rotationSpeed;
+  }
+
+  // Update the element's position and rotation smoothly
+  animate() {
+    const now = performance.now();
+    if (!this.state.lastTimestamp) this.state.lastTimestamp = now;
+
+    const deltaTime = (now - this.state.lastTimestamp) / 1000; // time in seconds
+    this.state.lastTimestamp = now;
+
+    // Move the element if a direction and speed are set
+    if (this.state.move.direction) {
+      const moveDistance = this.state.move.speed * deltaTime;
+      this.state.position.x += this.state.move.dx * moveDistance;
+      this.state.position.y += this.state.move.dy * moveDistance;
+    }
+
+    // Rotate the element toward the target angle
+    if (this.state.rotate.targetAngle !== this.state.rotate.currentAngle) {
+      const angleDiff =
+        this.state.rotate.targetAngle - this.state.rotate.currentAngle;
+      const rotationStep =
+        Math.sign(angleDiff) * this.state.rotate.speed * deltaTime;
+
+      if (Math.abs(angleDiff) <= Math.abs(rotationStep)) {
+        this.state.rotate.currentAngle = this.state.rotate.targetAngle;
+      } else {
+        this.state.rotate.currentAngle += rotationStep;
+      }
+    }
+
+    // Apply the updated position and rotation to the element
+    this.element.style.left = `${this.state.position.x}px`;
+    this.element.style.top = `${this.state.position.y}px`;
+    this.element.style.transform = `rotate(${this.state.rotate.currentAngle}deg)`;
+
+    // Request next frame to continue animation
+    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+  }
+
+  // Stop all animations (move and rotate)
+  stop() {
+    cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = null;
+  }
+};
+
 util.modElement = (elm) => {
   if (elm instanceof NodeList) {
     return Array.from(elm).map(util.modElement);
