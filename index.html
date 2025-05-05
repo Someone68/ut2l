@@ -54,7 +54,7 @@ _(".foo", (element, index) => {}) // runs the callback function for every elemen
 _(".foo", 2, (element) => {}) // runs the callback function once, for the third element with the class "foo" and mods it.
 _("#bar") // gets element by id and mods it.
 _("p") // grabs the first &lt;p&gt; tag in the DOM and mods it.
-_(existing_html_element) // returns the modded element.
+_(existing_html_element) // returns the wrapped element.
 // Modding elements: adds certain properties which makes it easier to modify the element (e.g. .css(), .text())</code></pre>
       <br />
       <p>Create an element</p>
@@ -86,35 +86,7 @@ _.randPick({
 
 document.body.append(bar); // append the element to the body</code></pre>
       <br />
-      <h1>Util-Modified Elements</h1>
-      <p>
-        Mod elements simply by using the main "find elements" function (e.g.
-        <code class="language-js">_("a")</code>). Modded elements have simple
-        properties listed below.
-      </p>
-      <pre><code class="language-js">
-// Mod an element
-_(search_query);
-_(existing_html_element);
-
-// Use the element
-_(".foo").css({property: value})
-...
-      </code></pre>
-
-      <h2>_(...).on(listener, selector/callback, callback, onlyOnce)</h2>
-      <p>
-        Creates an event listener for the element.<br /><br />
-        <code class="language-js">listener</code> defines what event to listen
-        for.<br /><br />
-        <code class="language-js">selector/callback</code>: Can either be:
-        <br />
-        - A CSS selector string: Used for event delegation. <br />
-        - A callback function: Called directly when the event occurs.<br /><br />
-        <code class="language-js">callback</code>: If selectorOrCallback is a
-        selector, this is the callback function invoked when an element matching
-        the selector triggers the event.
-      </p>
+      <h1><a href="docs.html">Full Documentation</a></h1>
     </div>
   </body>
 </html>

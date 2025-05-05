@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>util.js Documentation</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="prism.js"></script>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="util.js"></script>
+  </head>
+  <body>
+    <main class="container">
+      <h1>util.js Documentation</h1>
+      <a href="index.html">Back to index</a>
+      <section>
+        <h2>DOM Selection and Manipulation</h2>
+        <dl>
+          <dt><code class="language-js">util.one(selector, parent)</code></dt>
+          <dd>
+            Selects the first matching element. <br />
+            <pre><code class="language-js">util.one('.btn')</code></pre>
+          </dd>
+
+          <dt><code class="language-js">util.all(selector, parent)</code></dt>
+          <dd>
+            Selects all matching elements. <br />
+            <pre><code class="language-js">util.all('li')</code></pre>
+          </dd>
+
+          <dt><code class="language-js">util.html(el, html)</code></dt>
+          <dd>
+            Gets or sets inner HTML. <br />
+            <pre><code class="language-js">util.html(el, '&lt;strong&gt;Hi&lt;/strong&gt;')</code></pre>
+          </dd>
+
+          <dt><code class="language-js">util.text(el, text)</code></dt>
+          <dd>Gets or sets inner text.</dd>
+
+          <dt><code class="language-js">util.attr(el, name, value)</code></dt>
+          <dd>
+            Gets or sets an attribute. <br />
+            <pre><code class="language-js">util.attr(el, 'href', 'https://')</code></pre>
+          </dd>
+
+          <dt><code class="language-js">util.prop(el, name, value)</code></dt>
+          <dd>Gets or sets a property.</dd>
+
+          <dt><code class="language-js">util.val(el, value)</code></dt>
+          <dd>Gets or sets input value.</dd>
+
+          <dt><code class="language-js">util.data(el, key, value)</code></dt>
+          <dd>
+            Gets or sets <code class="language-html">data-</code> attributes.
+          </dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Class and Style Utilities</h2>
+        <dl>
+          <dt><code class="language-js">util.addClass(el, className)</code></dt>
+          <dd>
+            Adds class(es). <br />
+            <pre><code class="language-js">util.addClass(el, 'active')</code></pre>
+          </dd>
+
+          <dt>
+            <code class="language-js">util.removeClass(el, className)</code>
+          </dt>
+          <dd>Removes class(es).</dd>
+
+          <dt>
+            <code class="language-js">util.toggleClass(el, className)</code>
+          </dt>
+          <dd>Toggles class(es).</dd>
+
+          <dt><code class="language-js">util.hasClass(el, className)</code></dt>
+          <dd>Checks for class existence.</dd>
+
+          <dt><code class="language-js">util.css(el, styles)</code></dt>
+          <dd>
+            Applies inline styles. <br />
+            <pre><code class="language-js">util.css(el, { color: 'red' })</code></pre>
+          </dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>DOM Creation</h2>
+        <dl>
+          <dt><code class="language-js">util.create(tag, attrs)</code></dt>
+          <dd>
+            Creates an element. <br />
+            <pre><code class="language-js">util.create('button', { class: 'btn', text: 'Click' })</code></pre>
+          </dd>
+        </dl>
+        <div id="demo-create"></div>
+        <script>
+          const btn = util.create("button", { class: "btn", text: "Click me" });
+          btn.onclick = () => alert("Clicked!");
+          util.one("#demo-create").appendChild(btn);
+        </script>
+      </section>
+
+      <section>
+        <h2>Event Handling</h2>
+        <dl>
+          <dt><code class="language-js">util.on(el, event, handler)</code></dt>
+          <dd>Adds an event listener.</dd>
+
+          <dt><code class="language-js">util.off(el, event, handler)</code></dt>
+          <dd>Removes an event listener.</dd>
+
+          <dt>
+            <code class="language-js">util.once(el, event, handler)</code>
+          </dt>
+          <dd>Adds an event listener that runs once.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>DOM Traversal</h2>
+        <dl>
+          <dt><code class="language-js">util.parent(el, selector)</code></dt>
+          <dd>Finds a parent by selector.</dd>
+
+          <dt><code class="language-js">util.closest(el, selector)</code></dt>
+          <dd>Finds the closest ancestor by selector.</dd>
+
+          <dt><code class="language-js">util.children(el, selector)</code></dt>
+          <dd>Finds matching children.</dd>
+
+          <dt><code class="language-js">util.find(el, selector)</code></dt>
+          <dd>Finds matching descendants.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Form Utilities</h2>
+        <dl>
+          <dt><code class="language-js">util.serialize(form)</code></dt>
+          <dd>Converts form to key-value object.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Visibility and Effects</h2>
+        <dl>
+          <dt>
+            <code class="language-js">util.show(el)</code>,
+            <code class="language-js">util.hide(el)</code>
+          </dt>
+          <dd>Toggle visibility with display block/none.</dd>
+
+          <dt><code class="language-js">util.toggle(el)</code></dt>
+          <dd>Toggle display between none/block.</dd>
+
+          <dt>
+            <code class="language-js">util.fadeIn(el, duration)</code>,
+            <code class="language-js">util.fadeOut(el, duration)</code>
+          </dt>
+          <dd>Fade in/out effects.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>UI Components</h2>
+        <dl>
+          <dt><code class="language-js">util.ui.modal(options)</code></dt>
+          <dd>
+            Shows a modal. Example:
+            <pre><code class="language-js">util.ui.modal({ title: 'Hello', content: 'This is a modal' })</code></pre>
+          </dd>
+
+          <dt>
+            <code class="language-js">util.ui.toast(message, options)</code>
+          </dt>
+          <dd>
+            Shows a toast message. <br />
+            <pre><code class="language-js">util.ui.toast('Saved!')</code></pre>
+          </dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Utility Helpers</h2>
+        <dl>
+          <dt><code class="language-js">util.debounce(fn, delay)</code></dt>
+          <dd>Delays execution after user stops triggering.</dd>
+
+          <dt><code class="language-js">util.throttle(fn, delay)</code></dt>
+          <dd>Ensures function runs at most once per delay.</dd>
+
+          <dt><code class="language-js">util.randomId(prefix)</code></dt>
+          <dd>Generates a random string ID.</dd>
+
+          <dt><code class="language-js">util.copyText(text)</code></dt>
+          <dd>Copies text to clipboard.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Storage</h2>
+        <dl>
+          <dt><code class="language-js">util.store.set(key, value)</code></dt>
+          <dd>Sets value in localStorage.</dd>
+
+          <dt><code class="language-js">util.store.get(key)</code></dt>
+          <dd>Gets value from localStorage.</dd>
+
+          <dt><code class="language-js">util.store.remove(key)</code></dt>
+          <dd>Removes key from localStorage.</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Dynamic Loading</h2>
+        <dl>
+          <dt><code class="language-js">util.loadScript(src)</code></dt>
+          <dd>Loads JavaScript dynamically.</dd>
+
+          <dt><code class="language-js">util.loadStyle(href)</code></dt>
+          <dd>Loads CSS file dynamically.</dd>
+        </dl>
+      </section>
+    </main>
+  </body>
+</html>
