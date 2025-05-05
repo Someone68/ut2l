@@ -66,37 +66,45 @@ util.create = (elm) => {
   };
 };
 
+util.collisionHelper = (element, newX, newY) => {
+  const rect = element.getBoundingClientRect();
+  if (
+    newX < 0 ||
+    newY < 0 ||
+    newX + rect.width > window.innerWidth ||
+    newY + rect.height > window.innerHeight
+  ) {
+    return true;
+  }
+  return false;
+};
+
 util.MotionManager = class {
   constructor(element) {
     this.element = element;
-
-    // Initialize motion states
+    this.collisionHelper = util.collisionHelper;
     this.state = {
       move: {
-        direction: null, // up, right, down, etc.
-        speed: 0, // pixels per second
-        dx: 0, // direction x
-        dy: 0, // direction y
+        direction: null,
+        speed: 0,
+        dx: 0,
+        dy: 0,
       },
       rotate: {
-        targetAngle: 0, // target angle in degrees
-        currentAngle: 0, // current angle in degrees
-        speed: 0, // rotation speed in degrees per second
+        targetAngle: 0,
+        currentAngle: 0,
+        speed: 0,
       },
       position: {
         x: parseFloat(element.style.left || 0),
         y: parseFloat(element.style.top || 0),
       },
     };
-
-    // Store animation frame ID to cancel later
     this.animationFrame = null;
-
-    // Start the main animation loop
     this.animate();
   }
 
-  // Start moving in a specific direction with speed
+  // Move in a specific direction with speed
   moveInDirection(direction, speed) {
     const directions = {
       up: -Math.PI / 2,
@@ -117,7 +125,7 @@ util.MotionManager = class {
     this.state.move.dy = Math.sin(angle);
   }
 
-  // Start rotating the element to face a specific coordinate
+  // Rotate the element to face a specific coordinate
   rotateTowardCoordinate(targetX, targetY, rotationSpeed) {
     const rect = this.element.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -140,13 +148,6 @@ util.MotionManager = class {
     const deltaTime = (now - this.state.lastTimestamp) / 1000; // time in seconds
     this.state.lastTimestamp = now;
 
-    // Move the element if a direction and speed are set
-    if (this.state.move.direction) {
-      const moveDistance = this.state.move.speed * deltaTime;
-      this.state.position.x += this.state.move.dx * moveDistance;
-      this.state.position.y += this.state.move.dy * moveDistance;
-    }
-
     // Rotate the element toward the target angle
     if (this.state.rotate.targetAngle !== this.state.rotate.currentAngle) {
       const angleDiff =
@@ -159,6 +160,23 @@ util.MotionManager = class {
       } else {
         this.state.rotate.currentAngle += rotationStep;
       }
+    }
+
+    // Dynamically update movement direction based on current rotation angle
+    const angleRad = (this.state.rotate.currentAngle * Math.PI) / 180;
+    this.state.move.dx = Math.cos(angleRad);
+    this.state.move.dy = Math.sin(angleRad);
+
+    // Calculate the new position before moving
+    const moveDistance = this.state.move.speed * deltaTime;
+    const newX = this.state.position.x + this.state.move.dx * moveDistance;
+    const newY = this.state.position.y + this.state.move.dy * moveDistance;
+
+    // Check if the new position causes a collision
+    if (!this.collisionHelper(this.element, newX, newY)) {
+      // No collision, move the element
+      this.state.position.x = newX;
+      this.state.position.y = newY;
     }
 
     // Apply the updated position and rotation to the element
