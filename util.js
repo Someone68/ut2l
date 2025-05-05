@@ -98,8 +98,12 @@ util.MotionManager = class {
         speed: 0,
       },
       position: {
-        x: parseFloat(element.style.left) || 0,
-        y: parseFloat(element.style.top) || 0,
+        x: isNaN(parseFloat(element.style.left))
+          ? 0
+          : parseFloat(element.style.left),
+        y: isNaN(parseFloat(element.style.top))
+          ? 0
+          : parseFloat(element.style.top),
       },
       lastTimestamp: null,
     };
@@ -108,7 +112,6 @@ util.MotionManager = class {
     this.animate();
   }
 
-  // Move in a specific direction with speed
   moveDirection(direction, speed) {
     const directions = {
       up: -Math.PI / 2,
