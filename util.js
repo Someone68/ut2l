@@ -98,8 +98,8 @@ util.MotionManager = class {
         speed: 0,
       },
       position: {
-        x: parseFloat(element.style.left || 0),
-        y: parseFloat(element.style.top || 0),
+        x: parseFloat(element.style.left) || 0,
+        y: parseFloat(element.style.top) || 0,
       },
       lastTimestamp: null,
     };
