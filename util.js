@@ -90,6 +90,7 @@ util.MotionManager = class {
         speed: 0,
         dx: 0,
         dy: 0,
+        followRotation: false,
       },
       rotate: {
         targetAngle: 0,
@@ -100,8 +101,10 @@ util.MotionManager = class {
         x: parseFloat(element.style.left || 0),
         y: parseFloat(element.style.top || 0),
       },
+      lastTimestamp: null,
     };
     this.animationFrame = null;
+    this.animate = this.animate.bind(this);
     this.animate();
   }
 
@@ -118,12 +121,12 @@ util.MotionManager = class {
       "up-left": -(3 * Math.PI) / 4,
     };
 
+    const angle = directions[direction];
     this.state.move.direction = direction;
     this.state.move.speed = speed;
-    const angle = directions[direction];
-
     this.state.move.dx = Math.cos(angle);
     this.state.move.dy = Math.sin(angle);
+    this.state.move.followRotation = false;
   }
 
   // Rotate the element to face a specific coordinate
@@ -139,23 +142,22 @@ util.MotionManager = class {
 
     this.state.rotate.targetAngle = targetAngleDeg;
     this.state.rotate.speed = rotationSpeed;
+    this.state.move.followRotation = true; // movement should follow rotation
   }
 
-  // Update the element's position and rotation smoothly
+  // Main animation loop
   animate() {
     const now = performance.now();
     if (!this.state.lastTimestamp) this.state.lastTimestamp = now;
-
-    const deltaTime = (now - this.state.lastTimestamp) / 1000; // time in seconds
+    const deltaTime = (now - this.state.lastTimestamp) / 1000;
     this.state.lastTimestamp = now;
 
-    // Rotate the element toward the target angle
+    // Handle rotation
     if (this.state.rotate.targetAngle !== this.state.rotate.currentAngle) {
       const angleDiff =
         this.state.rotate.targetAngle - this.state.rotate.currentAngle;
       const rotationStep =
         Math.sign(angleDiff) * this.state.rotate.speed * deltaTime;
-
       if (Math.abs(angleDiff) <= Math.abs(rotationStep)) {
         this.state.rotate.currentAngle = this.state.rotate.targetAngle;
       } else {
@@ -163,36 +165,47 @@ util.MotionManager = class {
       }
     }
 
-    // Dynamically update movement direction based on current rotation angle
-    const angleRad = (this.state.rotate.currentAngle * Math.PI) / 180;
-    this.state.move.dx = Math.cos(angleRad);
-    this.state.move.dy = Math.sin(angleRad);
+    // Update movement direction based on rotation, if enabled
+    if (this.state.move.followRotation) {
+      const angleRad = (this.state.rotate.currentAngle * Math.PI) / 180;
+      this.state.move.dx = Math.cos(angleRad);
+      this.state.move.dy = Math.sin(angleRad);
+    }
 
-    // Calculate the new position before moving
+    // Update position
     const moveDistance = this.state.move.speed * deltaTime;
     const newX = this.state.position.x + this.state.move.dx * moveDistance;
     const newY = this.state.position.y + this.state.move.dy * moveDistance;
 
-    // Check if the new position causes a collision
     if (!this.collisionHelper(this.element, newX, newY) || !this.collision) {
-      // No collision, move the element
       this.state.position.x = newX;
       this.state.position.y = newY;
     }
 
-    // Apply the updated position and rotation to the element
+    // Apply to DOM
     this.element.style.left = `${this.state.position.x}px`;
     this.element.style.top = `${this.state.position.y}px`;
     this.element.style.transform = `rotate(${this.state.rotate.currentAngle}deg)`;
 
-    // Request next frame to continue animation
-    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+    // Schedule next frame
+    this.animationFrame = requestAnimationFrame(this.animate);
   }
 
-  // Stop all animations (move and rotate)
+  // Stop animation frame only
   stop() {
     cancelAnimationFrame(this.animationFrame);
     this.animationFrame = null;
+  }
+
+  // Stop all motion and reset state
+  stopAll() {
+    this.stop();
+    this.state.move.speed = 0;
+    this.state.move.dx = 0;
+    this.state.move.dy = 0;
+    this.state.move.followRotation = false;
+    this.state.rotate.speed = 0;
+    this.state.rotate.targetAngle = this.state.rotate.currentAngle;
   }
 };
 
